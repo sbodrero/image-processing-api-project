@@ -39,28 +39,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var fs_1 = __importDefault(require("fs"));
 var imagePocessing_1 = __importDefault(require("../../utilities/imagePocessing"));
-var express_1 = __importDefault(require("express"));
-describe('Test ImageProcessing middleware', function () {
-    var req = express_1.default.request;
-    var res = express_1.default.response;
-    req.query = { filename: 'fyord' };
-    res.type('text');
-    // @ts-ignore
-    var next = express_1.default.NextFunction;
-    it('should return a function()', function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, imagePocessing_1.default(req, res, next)];
-                    case 1:
-                        result = _a.sent();
-                        // @ts-ignore
-                        expect(result.status).toEqual('200');
-                        return [2 /*return*/];
-                }
-            });
-        });
+var constants_1 = require("../../utilities/constants");
+describe('Test ImageProcessing utility', function () {
+    var file;
+    var filename;
+    beforeAll(function () {
+        filename = 'palmtunnel';
+        file = constants_1.ROOT_PATH + "/full/" + filename + ".jpg";
     });
+    it('should return true if image exists', function () {
+        expect(fs_1.default.existsSync(file)).toBeTruthy();
+    });
+    it('Should return a processed image', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var width, height, processedImage;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    width = 200;
+                    height = 300;
+                    return [4 /*yield*/, imagePocessing_1.default(filename, width, height)];
+                case 1:
+                    processedImage = _a.sent();
+                    expect(processedImage.resizedImagePath).toEqual("/thumbs/thumb_" + filename + "_" + width + "_" + height + ".jpg");
+                    expect(processedImage.resizedImagePath).toBeDefined();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('should return a non exiting file message', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var width, height, processedImage;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    filename = 'palmtunel';
+                    width = 200;
+                    height = 300;
+                    return [4 /*yield*/, imagePocessing_1.default(filename, width, height)];
+                case 1:
+                    processedImage = _a.sent();
+                    expect(processedImage.resizedImagePath).toBeUndefined();
+                    expect(processedImage.errorMessage).toEqual("File doesn't exists");
+                    return [2 /*return*/];
+            }
+        });
+    }); });
 });

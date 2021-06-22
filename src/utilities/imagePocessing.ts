@@ -1,60 +1,47 @@
-import { Request, Response, NextFunction } from 'express';
-import path from 'path';
 import fs from 'fs';
 import sharp from 'sharp';
+import { ROOT_PATH, THUMBS_PATH } from './constants';
+
+interface ImageResponse {
+  resizedImagePath?: string;
+  errorMessage?: string;
+}
 
 const imageProcessing = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const {
-    query: { filename }
-  } = req;
-  let {
-    query: { width, height }
-  } = req;
+  filename: string,
+  width: number,
+  height: number
+): Promise<ImageResponse> => {
+  let resizedImagePath;
+  let errorMessage;
 
-  width = width as unknown as string;
-  height = height as unknown as string;
-  let resizedImagePath = '';
-  let ErrorMessage = '';
+  const fullImage = `${ROOT_PATH}/full/${filename}.jpg`;
+  const thumbImage = `${THUMBS_PATH}/thumb_${filename}_${width}_${height}.jpg`;
 
-  if (!filename || !width || !height) {
-    ErrorMessage =
-      'You must provide a file name, a width and a height to process image resizing';
+  if (fs.existsSync(thumbImage)) {
+    resizedImagePath = `/thumbs/thumb_${filename}_${width}_${height}.jpg`;
   } else {
-    // @ts-ignore
-    const imagesPath = path.dirname(require.main.filename);
-    const thumbsPath = `${imagesPath}/thumbs`;
-    const fullImage = `${imagesPath}/full/${filename}.jpg`;
-    const thumbImage = `${thumbsPath}/thumb_${filename}_${width}_${height}.jpg`;
-
-    if (fs.existsSync(thumbImage)) {
-      resizedImagePath = `/thumbs/thumb_${filename}_${width}_${height}.jpg`;
-    } else {
-      if (fs.existsSync(fullImage)) {
-        try {
-          await sharp(fullImage)
-            .resize(parseInt(width), parseInt(height))
-            .toFile(thumbImage)
-            .then(() => {
-              resizedImagePath = `/thumbs/thumb_${filename}_${width}_${height}.jpg`;
-            })
-            .catch((error: string) => (ErrorMessage = error));
-        } catch (err) {
-          ErrorMessage = err.toString();
-        }
-      } else {
-        ErrorMessage = "File doesn't exists";
+    if (fs.existsSync(fullImage)) {
+      try {
+        console.log('Processing image');
+        await sharp(fullImage)
+          .resize(width, height)
+          .toFile(thumbImage)
+          .then(() => {
+            resizedImagePath = `/thumbs/thumb_${filename}_${width}_${height}.jpg`;
+          })
+          .catch((error: string) => (errorMessage = error));
+      } catch (err) {
+        errorMessage = err.toString();
       }
+    } else {
+      errorMessage = "File doesn't exists";
     }
   }
-  res.render('index', {
+  return {
     resizedImagePath,
-    ErrorMessage
-  });
-  next();
+    errorMessage
+  };
 };
 
 export default imageProcessing;

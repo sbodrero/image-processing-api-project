@@ -5,8 +5,8 @@
   <title>Title</title>
 </head>
 <body style="background-color: black; text-align: center">
-  <% if ( ErrorMessage ) { %>
-    <h1 style="color: white;"><%= ErrorMessage %></h1>
+  <% if ( errorMessage ) { %>
+    <h1 style="color: white;"><%= errorMessage %></h1>
   <% } else if ( resizedImagePath ) { %>
   <h1 style="color: aliceblue">Your processed image</h1>
   <img src="<%= resizedImagePath %>" />

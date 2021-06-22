@@ -43,6 +43,21 @@ var supertest_1 = __importDefault(require("supertest"));
 var index_1 = __importDefault(require("../index"));
 var request = supertest_1.default(index_1.default);
 describe('Test endpoint response', function () {
+    describe('gets the / endpoint', function () {
+        it('Should return a 404', function (done) { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request.get('/')];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.status).toBe(404);
+                        done();
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
     describe('Test /api endpoint', function () {
         it('It should return a staus 200', function (done) { return __awaiter(void 0, void 0, void 0, function () {
             var response;
@@ -58,15 +73,15 @@ describe('Test endpoint response', function () {
             });
         }); });
     });
-    describe('gets the / endpoint', function () {
-        it('Should return a 404', function (done) { return __awaiter(void 0, void 0, void 0, function () {
+    describe('Test /api/images endpoint', function () {
+        it('It should return a status 400', function (done) { return __awaiter(void 0, void 0, void 0, function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, request.get('/')];
+                    case 0: return [4 /*yield*/, request.get('/api/images')];
                     case 1:
                         response = _a.sent();
-                        expect(response.status).toBe(404);
+                        expect(response.status).toBe(400);
                         done();
                         return [2 /*return*/];
                 }

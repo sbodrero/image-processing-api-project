@@ -39,62 +39,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
 var sharp_1 = __importDefault(require("sharp"));
-var imageProcessing = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var filename, _a, width, height, resizedImagePath, ErrorMessage, imagesPath, thumbsPath, fullImage, thumbImage, err_1;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+var constants_1 = require("./constants");
+var imageProcessing = function (filename, width, height) { return __awaiter(void 0, void 0, void 0, function () {
+    var resizedImagePath, errorMessage, fullImage, thumbImage, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                filename = req.query.filename;
-                _a = req.query, width = _a.width, height = _a.height;
-                width = width;
-                height = height;
-                resizedImagePath = '';
-                ErrorMessage = '';
-                if (!(!filename || !width || !height)) return [3 /*break*/, 1];
-                ErrorMessage =
-                    'You must provide a file name, a width and a height to process image resizing';
-                return [3 /*break*/, 8];
-            case 1:
-                imagesPath = path_1.default.dirname(require.main.filename);
-                thumbsPath = imagesPath + "/thumbs";
-                fullImage = imagesPath + "/full/" + filename + ".jpg";
-                thumbImage = thumbsPath + "/thumb_" + filename + "_" + width + "_" + height + ".jpg";
-                if (!fs_1.default.existsSync(thumbImage)) return [3 /*break*/, 2];
+                fullImage = constants_1.ROOT_PATH + "/full/" + filename + ".jpg";
+                thumbImage = constants_1.THUMBS_PATH + "/thumb_" + filename + "_" + width + "_" + height + ".jpg";
+                if (!fs_1.default.existsSync(thumbImage)) return [3 /*break*/, 1];
                 resizedImagePath = "/thumbs/thumb_" + filename + "_" + width + "_" + height + ".jpg";
-                return [3 /*break*/, 8];
+                return [3 /*break*/, 7];
+            case 1:
+                if (!fs_1.default.existsSync(fullImage)) return [3 /*break*/, 6];
+                _a.label = 2;
             case 2:
-                if (!fs_1.default.existsSync(fullImage)) return [3 /*break*/, 7];
-                _b.label = 3;
-            case 3:
-                _b.trys.push([3, 5, , 6]);
+                _a.trys.push([2, 4, , 5]);
+                console.log('Processing image');
                 return [4 /*yield*/, sharp_1.default(fullImage)
-                        .resize(parseInt(width), parseInt(height))
+                        .resize(width, height)
                         .toFile(thumbImage)
                         .then(function () {
                         resizedImagePath = "/thumbs/thumb_" + filename + "_" + width + "_" + height + ".jpg";
                     })
-                        .catch(function (error) { return (ErrorMessage = error); })];
+                        .catch(function (error) { return (errorMessage = error); })];
+            case 3:
+                _a.sent();
+                return [3 /*break*/, 5];
             case 4:
-                _b.sent();
-                return [3 /*break*/, 6];
-            case 5:
-                err_1 = _b.sent();
-                ErrorMessage = err_1.toString();
-                return [3 /*break*/, 6];
-            case 6: return [3 /*break*/, 8];
-            case 7:
-                ErrorMessage = "File doesn't exists";
-                _b.label = 8;
-            case 8:
-                res.render('index', {
+                err_1 = _a.sent();
+                errorMessage = err_1.toString();
+                return [3 /*break*/, 5];
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                errorMessage = "File doesn't exists";
+                _a.label = 7;
+            case 7: return [2 /*return*/, {
                     resizedImagePath: resizedImagePath,
-                    ErrorMessage: ErrorMessage
-                });
-                next();
-                return [2 /*return*/];
+                    errorMessage: errorMessage
+                }];
         }
     });
 }); };
