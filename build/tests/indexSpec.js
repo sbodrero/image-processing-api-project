@@ -44,7 +44,7 @@ var index_1 = __importDefault(require("../index"));
 var request = supertest_1.default(index_1.default);
 describe('Test endpoint response', function () {
     describe('gets the / endpoint', function () {
-        it('Should return a 404', function (done) { return __awaiter(void 0, void 0, void 0, function () {
+        it('Should return a status 404', function (done) { return __awaiter(void 0, void 0, void 0, function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -59,7 +59,7 @@ describe('Test endpoint response', function () {
         }); });
     });
     describe('Test /api endpoint', function () {
-        it('It should return a staus 200', function (done) { return __awaiter(void 0, void 0, void 0, function () {
+        it('It should return a status 200', function (done) { return __awaiter(void 0, void 0, void 0, function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
